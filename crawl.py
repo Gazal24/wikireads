@@ -15,6 +15,7 @@ br = mechanize.Browser()
 br.set_handle_robots(False)
 br.addheaders = [('User-agent', "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.22 (KHTML, like Gecko) Chrome/25.0.1364.97 Safari/537.22")]
 level = 1
+#MANUAL TREE
 category = [["Culture",0]] # [0,1] 0-Name, 1-Level
 curr_cat = ""
 sub_cat_list = []
@@ -39,7 +40,7 @@ def linkify(x):
 
 while(category):
     count = count + 1
-    if(count == 10):
+    if(count == 100):
         count = 0
         f = open("category_checkpoint", 'w')
         pickle.dump(category, f)
