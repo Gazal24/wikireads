@@ -7,6 +7,7 @@ import mechanize
 import BeautifulSoup
 import time
 import pickle
+import datetime
 
 link = "http://en.wikipedia.org/wiki/Category:Arts"
 
@@ -15,13 +16,14 @@ br = mechanize.Browser()
 br.set_handle_robots(False)
 br.addheaders = [('User-agent', "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.22 (KHTML, like Gecko) Chrome/25.0.1364.97 Safari/537.22")]
 level = 1
-#MANUAL TREE
-category = [["Culture",0]] # [0,1] 0-Name, 1-Level
+
+category = [["Concepts",0]] # [0,1] 0-Name, 1-Level
 curr_cat = ""
 sub_cat_list = []
 article_list = []
 count  = 0
-
+run_log = ""
+f_run_log = open("run_log", 'a')
 
 def mapCat(x):
     return [str(unicode(x.contents[0]).encode("utf-8")), level+1]
@@ -47,11 +49,22 @@ while(category):
         # f.write(category)
         f.close()
 
+    if(count % 5 == 0):
+        f_run_log.close()
+        f_run_log = open("run_log", 'a')
+
+    if(count % 20 == 0):
+        f = open("time_log", 'a')
+        f.write(str(datetime.datetime.now())[:19] + "\n")
+        f.close()
+
+
+        
     try:
         cat = category.pop()
         level = cat[1]
-        if(level <= 1):
-            curr_cat = cat[0]
+        #if(level <= 1):
+        curr_cat = cat[0]
 
 
         raw = br.open(linkify(cat[0])).read()
@@ -82,13 +95,12 @@ while(category):
             sub_cat_list = []
 
 
-
-        if(level <= 1):
-            f = open("final_tree", 'a')
-            for c in sub_cat_list:
-                f.write(curr_cat + ", " + c[0]  + "\n")
-            f.close()
-            
+        # WRITE (PARENT, CATEGORIES) IN FILE
+        # if(level <= 1):
+        f = open("full_tree", 'a')
+        for c in sub_cat_list:
+            f.write(curr_cat + ", " + c[0]  + "\n")
+        f.close()
             
             
 
@@ -112,24 +124,20 @@ while(category):
                 while("previous 200" in article_list): article_list.remove("previous 200")
 
 
-        # print "\n***************************>>>>>>>>>>>"
+
         # print "Current Cat : " , curr_cat,"\n" , category , " :: Level : ", level
-        # print "<<<<<<<<<<<****************************\n"
-        # print 
-        # print "\n\n\n======================================"
         # print sub_cat_list
         # print article_list
 
+        # WRITE (PARENT, CATEGORIES) IN FILE
         f = open("article_category", 'a')
         for a in article_list:
             f.write(curr_cat + ", " + a  + "\n")
         f.close()
-
-        print "OK: ", cat
+        
+        # WRITE LOG
+        f_run_log.write("\nOK: " + str(datetime.datetime.now())[:19] + " " + str(cat))
 
         category = category + sub_cat_list
-        
-        
     except:
         print "Error: ", cat
-
