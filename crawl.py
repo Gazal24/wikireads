@@ -140,4 +140,5 @@ while(category):
 
         category = category + sub_cat_list
     except:
-        print "Error: ", cat
+        f_run_log.write("\nERROR: " + str(datetime.datetime.now())[:19] + " " + str(cat))
+        print "Error: ", str(datetime.datetime.now())[:19], str(cat)
